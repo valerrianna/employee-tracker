@@ -1,0 +1,27 @@
+{
+  "name": "10",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valerrianna/employee-tracker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/valerrianna/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/valerrianna/employee-tracker#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql2": "^2.3.3-rc.0"
+  },
+  "devDependencies": {
+    "jest": "^27.3.1"
+  }
+}
