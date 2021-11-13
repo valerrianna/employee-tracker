@@ -31,4 +31,10 @@ VALUES
   ('Steve', 'Hancock', 4, NULL),
   ('Madeline', 'Fromage', 4, NULL),
   ('Lauren', 'Turbo', 4, NULL);
-  
+
+INSERT INTO roles (title, salary)
+VALUE 
+    ('Doctor', 100000.00),
+    ('Nurse', 80000.00),
+    ('Assistant', 30000.00),
+    ('Janitor', 60000.00);
