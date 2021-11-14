@@ -15,4 +15,10 @@ CREATE TABLE roles (
     title VARCHAR(30) NOT NULL,
     salary DECIMAL(65,2) NOT NULL,
     department_id INT NOT NULL
+    CONSTRAINT fk_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE SET NULL
 );
+
+CREATE TABLE department (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY
+    department_name VARCHAR(30) NOT NULL, 
+)
