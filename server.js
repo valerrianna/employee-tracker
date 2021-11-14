@@ -1,4 +1,5 @@
 const express = require('express')
+const router = express.Router();
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -6,6 +7,7 @@ const app = express();
 const mysql = require('mysql2');
 
 const inquirer = require('inquirer')
+const cTable = require('console.table');
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -73,38 +75,24 @@ const promptUser = () => {
   )
 }
 
-// app.get('/api/employees', (req, res) => {
-//     const sql = `SELECT * FROM employees`;
-  
-//     db.query(sql, (err, rows) => {
-//       if (err) {
-//         res.status(500).json({ error: err.message });
-//         return;
-//       }
-//       res.json({
-//         message: 'success',
-//         data: rows
-//       });
-//     });
-// });
-
 showDepartments = () => {
-  const sql = `SELECT department.id AS id, department.department_name AS department FROM department`; 
-
-  connection.promise().query(sql, (err, rows) => {
+  // const sql = `SELECT department.id AS id, department.department_name AS department FROM department`; 
+  const sql = `SELECT * FROM department`;
+  db.query(sql, (err, rows) => {
     if (err) throw err;
+    console.log(rows);
     console.table(rows);
     promptUser();
   });
 };
 
 showRoles = () => {
-  const sql = `SELECT role.id, role.title, department.name AS department
-               FROM role
-               INNER JOIN department ON role.department_id = department.id`;
-  
-  connection.promise().query(sql, (err, rows) => {
+  const sql = `SELECT roles.id, roles.title, department.department_name AS department
+               FROM roles
+               INNER JOIN department ON roles.department_id = department.id`;
+  db.query(sql, (err, rows) => {
     if (err) throw err; 
+    console.log(rows)
     console.table(rows); 
     promptUser();
   })
@@ -115,62 +103,47 @@ showEmployees = () => {
                       employees.first_name, 
                       employees.last_name, 
                       roles.title, 
-                      department.name AS department,
+                      department.department_name AS department,
                       roles.salary, 
                       CONCAT (manager.first_name, " ", manager.last_name) AS manager
-               FROM employee
-                      LEFT JOIN role ON employees.role_id = role.id
+               FROM employees
+                      LEFT JOIN roles ON employees.role_id = roles.id
                       LEFT JOIN department ON roles.department_id = department.id
                       LEFT JOIN employees manager ON employees.manager_id = manager.id`;
-
-  connection.promise().query(sql, (err, rows) => {
+  db.query(sql, (err, rows) => {
     if (err) throw err; 
+    console.log(rows);
     console.table(rows);
     promptUser();
   });
-
-// Get a single employee
-app.get('/api/employees/:id', (req, res) => {
-    const sql = `SELECT * FROM employees WHERE id = ?`;
-    const params = [req.params.id];
-  
-    db.query(sql, params, (err, row) => {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
-      res.json({
-        message: 'success',
-        data: row
-      });
-    });
-});
-
-// Create an employee
-app.post('/api/employees', ({ body }, res) => {
-    const errors = inputCheck(body, 'first_name', 'last_name', 'role_id', 'manager_id');
-    if (errors) {
-      res.status(400).json({ error: errors });
-      return;
-    }
-    const sql = `INSERT INTO candidates (first_name, last_name, role_id, manager_id) VALUES (?,?,?)`;
-    const params = [body.first_name, body.last_name, body.role_id, body.manager_id]  ;
-
-    db.query(sql, params, (err, result) => {
-        if (err) {
-            res.status(400).json({ error: err.message });
-            return;
-        }
-        res.json({
-            message: 'success',
-            data: body
-        });
-    });
-});
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
 }
 
+addDepartment = () => {
+  inquirer.prompt([
+    {
+      type: 'input', 
+      name: 'addDepartment',
+      message: "What department do you want to add?",
+      validate: addDepartment => {
+        if (addDepartment) {
+            return true;
+        } else {
+            console.log('Please enter a department');
+            return false;
+        }
+      }
+    }
+  ])
+    .then(answer => {
+      const sql = `INSERT INTO department (name)
+                  VALUES (?)`;
+      connection.query(sql, answer.addDepartment, (err, result) => {
+        if (err) throw err;
+        console.log('Added ' + answer.addDepartment + " to departments!"); 
+    });
+  });
+};
+
 promptUser();
+
+module.exports = router;
