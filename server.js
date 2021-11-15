@@ -236,7 +236,7 @@ addEmployee = () => {
       inquirer.prompt([
             {
               type: 'list',
-              name: 'role',
+              name: 'roles',
               message: "What is the employee's role?",
               choices: roles
             }
@@ -259,9 +259,9 @@ addEmployee = () => {
                   .then(managerChoice => {
                     const managers = managerChoice.managers;
                     params.push(managers);
-                    const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
+                    const manageridsql = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
                     VALUES (?, ?, ?, ?)`;
-                    db.query(sql, params, (err, result) => {
+                    db.query(manageridsql, params, (err, result) => {
                     if (err) throw err;
                     console.log("Employee has been added!")
                     promptUser();
@@ -297,7 +297,7 @@ updateEmployee = () => {
             inquirer.prompt([
               {
                 type: 'list',
-                name: 'role',
+                name: 'roles',
                 message: "What is the employee's new role?",
                 choices: roles
               }
